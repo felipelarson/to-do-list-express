@@ -1,3 +1,3 @@
 # to-do-list-express
 
-Estudos feito para o aprendizado do Express
+Estudos feito para o aprendizado do Express, MongoDB, Mongoose
