@@ -1,11 +1,11 @@
 const express = require('express')
 
-const checklistDepedentroute = express.Router()
+const checklistDepedentRoute = express.Router()
 
 const Checklist = require('../model/checklist')
 const Task = require('../model/task')
 
-checklistDepedentroute.get('/:id/tasks/new', (req, res) => {
+checklistDepedentRoute.get('/:id/tasks/new', async(req, res) => {
   try {
     let task = Task()
     res.status(200).render('tasks/new', {checklistId: req.params.id, task: task})
@@ -14,4 +14,20 @@ checklistDepedentroute.get('/:id/tasks/new', (req, res) => {
   }
 })
 
-module.exports = {checklistDepedent: checklistDepedentroute}
+checklistDepedentRoute.post('/:id/tasks', async(req, res) => {
+  let { name } = req.body.task
+  let task = new Task({ name, checklist: req.params.id })
+  
+  try {
+    await task.save()
+    let checklist = await Checklist.findById(req.params.id)
+    checklist.tasks.push(task)
+    await checklist.save()
+    res.redirect(`/checklists/${req.params.id}`)
+  } catch (error) {
+    let errors = error.errors
+    res.status(422).render('tasks/new', {task: {...task, errors}, checklistId: req.params.id})
+  }
+})
+
+module.exports = {checklistDepedent: checklistDepedentRoute}
