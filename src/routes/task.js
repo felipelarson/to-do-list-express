@@ -46,7 +46,7 @@ checklistDepedentRoute.post('/:id/tasks', async(req, res) => {
 })
 
 simpleRouter.put(':id', async(req, res) => {
-  let task = Task.findById(req.params.id)
+  let task = await Task.findById(req.params.id)
   try {
     task.set(req.body.task)
     await task.save()
